@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="./images/favicon.ico" sizes="any" />
+  <script src="calculator.js" defer></script>
+  <script src="lcd-display.js" defer></script>
+  <script src="recorder.js" defer></script>
+  <title>Scientific Calculator</title>
+</head>
+
+<body id="char">
+  <h2>Scientific Calculator</h2>
+  <h5>Try it with your keyboard👇</h5>
+  <div class="workspace">
+  <div class="calculator">
+    <span class="model">fx-82MS</span>
+
+    <div class="screen">
+      <div class="indicators" id="indicators">
+        <span id="ind-shift" class="ind"></span>
+        <span id="ind-alpha" class="ind"></span>
+        <span id="ind-hyp" class="ind"></span>
+        <span id="ind-sto" class="ind"></span>
+        <span id="ind-m" class="ind"></span>
+        <span id="ind-mode" class="ind"></span>
+        <span id="ind-deg" class="ind">DEG</span>
+        <span id="ind-fixsci" class="ind"></span>
+      </div>
+      <div class="input" id="input"></div>
+      <div class="main-display" id="main-display"></div>
+    </div>
+
+    <div class="modifiers">
+      <button class="shift center-shift simple-button" id="btn-shift" tabindex="1"></button>
+      <button class="alpha center-alpha simple-button" id="btn-alpha" tabindex="2"></button>
+      <button class="on center-shift simple-button" id="btn-on" tabindex="4"></button>
+      <button class="mode simple-button" id="btn-mode" tabindex="3"></button>
+    </div>
+
+    <div class="replay">Replay</div>
+
+    <button class="nav up">▲</button>
+    <button class="nav down">▼</button>
+    <button class="nav left">◀︎</button>
+    <button class="nav right">▶︎</button>
+
+
+    <table class="function-keys">
+      <tr>
+        <td>
+          <button class="reciprocal center-shift simple-button" data-func="reciprocal">
+            x<span class="sup">-1</span>
+          </button>
+        </td>
+        <td><button class="combin center-shift simple-button" data-func="combin">nCr</button></td>
+        <td></td>
+        <td></td>
+        <td><button class="pol simple-button" data-func="pol">Pol(</button></td>
+        <td>
+          <button class="cube center-shift simple-button" data-func="cube">
+            x<span class="sup">3</span>
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button class="frac center-shift simple-button" data-func="frac">
+            a<span class="sup">b</span>/<span class="xxs">c</span>
+          </button>
+        </td>
+        <td><button class="sqrt simple-button" data-func="sqrt">&radic;</button></td>
+        <td>
+          <button class="square simple-button" data-func="square">x<span class="sup">2</span></button>
+        </td>
+        <td><button class="pow center-shift simple-button" data-func="pow">^</button></td>
+        <td><button class="log center-shift simple-button" data-func="log">log</button></td>
+        <td><button class="ln simple-button" data-func="ln">ln</button></td>
+      </tr>
+      <tr>
+        <td><button class="minus simple-button" data-func="minus">(&minus;)</button></td>
+        <td><button class="deg simple-button" data-func="deg">&deg;&prime;&Prime;</button></td>
+        <td><button class="hyp simple-button" data-func="hyp">hyp</button></td>
+        <td><button class="sin simple-button" data-func="sin">sin</button></td>
+        <td><button class="cos simple-button" data-func="cos">cos</button></td>
+        <td><button class="tan simple-button" data-func="tan">tan</button></td>
+      </tr>
+      <tr>
+        <td><button class="rcl center-shift simple-button" data-func="rcl">RCL</button></td>
+        <td><button class="eng center-shift simple-button" data-func="eng">ENG</button></td>
+        <td><button class="open-paren simple-button" data-func="open-paren">(</button></td>
+        <td><button class="close-paren simple-button" data-func="close-paren">)</button></td>
+        <td><button class="comma simple-button" data-func="comma">,</button></td>
+        <td><button class="mem-plus simple-button" data-func="mem-plus">M+</button></td>
+      </tr>
+    </table>
+
+    <table class="basic-keys">
+      <tr>
+        <td><button class="simple-button" data-key="55">7</button></td>
+        <td><button class="simple-button" data-key="56">8</button></td>
+        <td><button class="simple-button" data-key="57">9</button></td>
+        <td>
+          <button class="pink del center-shift simple-button" data-key="8">
+            DEL
+          </button>
+        </td>
+        <td>
+          <button class="pink ac center-shift simple-button" data-key="27">
+            AC
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td><button class="simple-button" data-key="52">4</button></td>
+        <td><button class="simple-button" data-key="53">5</button></td>
+        <td><button class="simple-button" data-key="54">6</button></td>
+        <td>
+          <button class="simple-button" data-key="106" data-operation>
+            x
+          </button>
+        </td>
+        <td>
+          <button class="simple-button" data-key="191" data-operation>
+            &divide;
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button class="one center-shift simple-button" data-key="49">1</button>
+        </td>
+        <td><button class="two center-shift simple-button" data-key="50">2</button></td>
+        <td><button class="simple-button" data-key="51">3</button></td>
+        <td>
+          <button class="simple-button" data-key="187" data-operation>
+            +
+          </button>
+        </td>
+        <td>
+          <button class="simple-button" data-key="189" data-operation>
+            -
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button class="zero center-shift simple-button" data-key="48">
+            0
+          </button>
+        </td>
+        <td>
+          <button class="period center-shift simple-button" data-key="190">
+            .
+          </button>
+        </td>
+        <td>
+          <button class="exp center-shift simple-button" data-key="69" data-func="exp">
+            EXP
+          </button>
+        </td>
+        <td>
+          <button class="ans center-shift simple-button" data-key="186" data-func="ans">
+            Ans
+          </button>
+        </td>
+        <td>
+          <button class="equals center-shift simple-button" data-key="13">
+            =
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <section class="recorder" id="recorder">
+    <h3 class="rec-heading">Worked examples</h3>
+
+    <div class="rec-controls">
+      <button type="button" class="rec-btn" id="rec-toggle">
+        <span class="rec-dot"></span><span id="rec-toggle-label">Record example</span>
+      </button>
+      <span class="rec-count" id="rec-count"></span>
+    </div>
+
+    <div class="rec-naming" id="rec-naming" hidden>
+      <input type="text" id="rec-name" maxlength="60" placeholder="Name this example (e.g. sin 30 + cos 60)" />
+      <div class="rec-naming-actions">
+        <button type="button" class="rec-save" id="rec-save">Save</button>
+        <button type="button" class="rec-discard" id="rec-discard">Discard</button>
+      </div>
+    </div>
+
+    <div class="rec-list" id="rec-list"></div>
+
+    <div class="rec-replay" id="rec-replay" hidden>
+      <div class="rec-replay-title" id="rec-replay-title"></div>
+      <div class="rec-replay-step" id="rec-replay-step"></div>
+      <div class="rec-replay-dots" id="rec-replay-dots"></div>
+      <div class="rec-replay-controls">
+        <button type="button" class="rec-btn small" id="rec-prev">◀ Prev</button>
+        <button type="button" class="rec-btn small" id="rec-play">▶ Play</button>
+        <button type="button" class="rec-btn small" id="rec-next">Next ▶</button>
+        <button type="button" class="rec-btn small ghost" id="rec-exit">Exit</button>
+      </div>
+    </div>
+
+    <p class="rec-hint">
+      Press <b>Record example</b>, work through the calculation on the keys (mouse or keyboard),
+      then stop and give it a name. Playing it back walks the calculator through every press,
+      lighting up each key as it goes. Examples are stored in this browser, so they survive a reload.
+    </p>
+  </section>
+  </div>
+</body>
+
+</html>
