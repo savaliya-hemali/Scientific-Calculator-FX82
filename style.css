@@ -1,0 +1,744 @@
+/* LCD glyphs are drawn by lcd-display.js, so no display font is needed here */
+@import url("https://fonts.cdnfonts.com/css/eurostile-mn");
+@import url("https://fonts.cdnfonts.com/css/pirulen");
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 1.5rem 1rem 3rem;
+  box-sizing: border-box;
+  background: #0f172a; /* deep slate */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Calculator and the example recorder sit side by side, stacking when narrow */
+.workspace {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+body > h2,
+body > h5 {
+  color: #f2f2f2;
+  font-family: Helvetica;
+  width: 100%;
+  text-align: center;
+}
+
+.calculator {
+  width: 18rem;
+  height: 35rem;
+  background: hsl(220, 9%, 32%); /* neutral graphite casing */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 100px 30px;
+  border-bottom-right-radius: 100px 30px;
+  /* stays positioned: the replay pad and nav arrows are absolute children */
+  position: relative;
+  flex: 0 0 auto;
+  padding: 1.5rem;
+  color: hsl(225, 20%, 84%);
+  font-family: Helvetica;
+  box-shadow: 0 0 50px 5px hsla(0, 0%, 0%, 0.5);
+}
+
+.logo,
+.model,
+.svpam {
+  font-size: 90%;
+}
+
+.logo {
+  font-family: "Eurostile MN", sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.model {
+  float: right;
+  font-style: italic;
+  font-family: CMU;
+  font-weight: 700;
+}
+
+.svpam {
+  width: 100%;
+  text-align: center;
+  display: inline-block;
+  color: hsl(353, 50%, 70%);
+  margin-top: 0.75em;
+  font-family: "Pirulen Rg", sans-serif;
+}
+
+/* The LCD is painted onto a canvas by lcd-display.js. The .indicators,
+   .input and .main-display elements stay in the DOM as the source of
+   truth for the renderer, but are not themselves visible. */
+.screen {
+  width: 100%;
+  height: 5.2rem;
+  background: #97ab96;
+  background: linear-gradient(to bottom, #a3b6a0, #8b9f8b 65%, #93a692);
+  border-radius: 5px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.45), inset 0 2px 5px rgba(0, 0, 0, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.12);
+  margin: 0.8em 0;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid #5a6e5d;
+}
+
+.screen .lcd {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* Glass sheen over the finished pixels */
+.screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 22%,
+    rgba(255, 255, 255, 0) 45%
+  );
+}
+
+.screen.off {
+  background: linear-gradient(to bottom, #93a695, #849682);
+}
+
+/* Not rendered, so innerText reads back exactly what was written */
+.screen .indicators,
+.screen .input,
+.screen .main-display {
+  display: none;
+}
+
+button {
+  text-align: center;
+  padding: 5px;
+  border: 0 white none;
+  box-sizing: border-box;
+  color: hsl(225, 20%, 84%);
+  position: relative;
+  box-shadow: 2px 2px 5px 0 hsla(0, 0%, 0%, 0.75);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.simple-button,
+.on {
+  cursor: pointer;
+}
+.active {
+  top: 2px;
+  -webkit-box-shadow: inset 0 1px 0 #ffe5c4b4, inset 0 -3px 0 #161616;
+  -moz-box-shadow: inset 0 1px 0 #ffe5c4b4, inset 0 -3pxpx 0 #161616;
+  box-shadow: inset 0 1px 0 #ffe5c4b4, inset 0 -3px 0 #161616;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td {
+  text-align: center;
+}
+
+/* Trimmed to offset the taller LCD, so the replay pad stays aligned */
+.modifiers {
+  margin: 1.5rem 0 1.15rem 0;
+}
+
+.modifiers button {
+  width: 2.35rem;
+  height: 1.25rem;
+  border-radius: 15px;
+  position: relative;
+  margin-right: 0.75rem;
+  background: hsl(221, 14%, 66%);
+  background: linear-gradient(to top, hsl(221, 14%, 66%), hsl(221, 14%, 71%));
+}
+
+.modifiers button::before,
+.modifiers button::after {
+  text-transform: uppercase;
+}
+
+.mode::before,
+.on::before {
+  color: hsl(225, 20%, 84%);
+}
+
+.shift {
+  left: 0;
+}
+
+.alpha {
+  top: 5px;
+}
+
+.mode {
+  float: right;
+  top: 11px;
+}
+
+.on {
+  float: right;
+  right: 0;
+  margin-right: 0.5em !important;
+}
+
+.shift::before {
+  content: "Shift";
+}
+.alpha::after {
+  content: "Alpha";
+}
+.mode::before {
+  content: "Mode";
+  left: -9px;
+}
+.mode::after {
+  content: "CLR";
+  right: -9px;
+  color: hsl(34, 68%, 72%);
+}
+.on::before {
+  content: "ON";
+}
+
+.replay {
+  background: linear-gradient(to top, hsl(221, 14%, 66%), hsl(221, 14%, 71%));
+  width: 78px;
+  height: 70px;
+  line-height: 70px;
+  position: absolute;
+  left: 38%;
+  top: 30%;
+  border-radius: 125px;
+  text-transform: uppercase;
+  font-size: 9px;
+  text-align: center;
+  vertical-align: middle;
+  box-shadow: 2px 2px 5px 0 hsla(0, 0%, 0%, 0.75);
+}
+
+button.nav {
+  position: absolute;
+  background: none;
+  box-shadow: none;
+  width: 26px;
+  height: 22px;
+  padding: 0;
+  font-size: 11px;
+  line-height: 22px;
+  color: hsl(208, 30%, 22%);
+  z-index: 2;
+}
+
+/* Replay pad: 78x70px circle at left 38% / top 30% */
+.nav.up {
+  left: calc(38% + 26px);
+  top: calc(30% + 1px);
+}
+
+.nav.down {
+  left: calc(38% + 26px);
+  top: calc(30% + 47px);
+}
+
+.nav.left {
+  left: calc(38% + 1px);
+  top: calc(30% + 24px);
+}
+
+.nav.right {
+  left: calc(38% + 51px);
+  top: calc(30% + 24px);
+}
+
+button.nav.active {
+  transform: scale(0.85);
+}
+
+.function-keys {
+  margin: 1.5rem 0 0.75rem 0;
+}
+
+.function-keys button {
+  background: hsl(198, 39%, 23%);
+  background: linear-gradient(to top, hsl(198, 39%, 23%), hsl(198, 39%, 28%));
+  font-size: small;
+  width: 2.25rem;
+  height: 1.5rem;
+  border-radius: 5px;
+}
+
+.function-keys td {
+  padding-bottom: 1rem;
+  padding-right: 0.25rem;
+}
+
+/* .basic-keys {
+} */
+.basic-keys button {
+  width: 2.5rem;
+  height: 1.75rem;
+  background: hsl(221, 14%, 66%);
+  background: linear-gradient(to top, hsl(221, 14%, 66%), hsl(221, 14%, 71%));
+  border-radius: 3px 3px 7px 7px;
+}
+
+.basic-keys td {
+  padding-bottom: 1rem;
+  padding-right: 0.25rem;
+}
+
+.basic-keys tr:last-child td {
+  padding-bottom: 0;
+}
+
+button.pink {
+  background: hsl(353, 50%, 70%);
+  background: linear-gradient(to top, hsl(353, 50%, 70%), hsl(353, 50%, 75%));
+}
+
+button::before,
+button::after {
+  position: absolute;
+  font-size: 9px;
+  top: -13px;
+  display: block;
+  width: 100%;
+  display: inline-block;
+}
+
+/* shift */
+button::before {
+  color: hsl(34, 68%, 72%);
+  left: 0;
+  text-align: left;
+}
+
+/* alpha */
+button::after {
+  color: hsl(353, 50%, 70%);
+  right: 0;
+  text-align: right;
+}
+
+.center-shift::before,
+.center-alpha::after {
+  text-align: center;
+}
+
+.del::before {
+  content: "INS";
+}
+.ac::before {
+  content: "OFF";
+}
+.reciprocal::before {
+  content: "x!";
+}
+.combin::before {
+  content: "nPr";
+}
+.pol::before {
+  content: "Rec(";
+}
+.pol::after {
+  content: ":";
+}
+.cube::before {
+  content: "\221b";
+}
+.frac::before {
+  content: "d/c";
+}
+.pow::before {
+  content: "ˣ \221A";
+}
+.log::before {
+  content: "10 ˣ";
+}
+.ln::before {
+  content: "e ˣ";
+}
+.ln::after {
+  content: "e";
+}
+.minus::before {
+  content: "";
+}
+.minus::after {
+  content: "A";
+}
+.deg::before {
+  content: "\2190";
+}
+.deg::after {
+  content: "B";
+}
+.hyp::after {
+  content: "C";
+}
+.sin::before {
+  content: "sin \207b\b9";
+}
+.cos::before {
+  content: "cos \207b\b9";
+}
+.tan::before {
+  content: "tan \207b\b9";
+}
+.sin::after {
+  content: "D";
+}
+.cos::after {
+  content: "E";
+}
+.tan::after {
+  content: "F";
+}
+.rcl::before {
+  content: "STO";
+}
+.eng::before {
+  content: "\2190";
+}
+.close-paren::after {
+  content: "X";
+}
+.comma::before {
+  content: ";";
+}
+.comma::after {
+  content: "Y";
+}
+.mem-plus::before {
+  content: "M-";
+}
+.mem-plus::after {
+  content: "M";
+}
+.zero::before {
+  content: "Rnd";
+}
+.period::before {
+  content: "Ran#";
+}
+.exp::before {
+  content: "\03c0";
+}
+.ans::before {
+  content: "DRG\25ba";
+}
+.equals::before {
+  content: "%";
+}
+.one::before {
+  content: "S-SUM";
+  font-size: 8px;
+  top: -10px;
+}
+.two::before {
+  content: "S-VAR";
+  font-size: 8px;
+  top: -10px;
+}
+
+/* jazzy 'x' */
+/* .reciprocal, .square {} */
+
+/* ---------------------------------------------------------------
+   Example recorder
+   --------------------------------------------------------------- */
+.recorder {
+  width: 21rem;
+  max-width: 100%;
+  box-sizing: border-box;
+  align-self: stretch;
+  background: #172033;
+  border: 1px solid rgba(226, 232, 240, 0.12);
+  border-radius: 12px;
+  padding: 1rem 1.1rem 1.2rem;
+  color: hsl(225, 20%, 84%);
+  font-family: Helvetica;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.recorder [hidden] {
+  display: none !important;
+}
+
+.rec-heading {
+  margin: 0 0 0.9rem 0;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: hsl(34, 68%, 72%);
+}
+
+.rec-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.recorder button {
+  box-shadow: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.rec-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: hsl(220, 9%, 32%);
+  color: hsl(225, 20%, 88%);
+  border: 1px solid rgba(226, 232, 240, 0.14);
+  border-radius: 8px;
+  padding: 0.5rem 0.85rem;
+  font-family: Helvetica;
+  font-size: 13px;
+}
+
+.rec-btn:hover {
+  background: hsl(220, 9%, 38%);
+}
+
+.rec-btn.small {
+  flex: 1 1 auto;
+  justify-content: center;
+  padding: 0.45rem 0.5rem;
+  font-size: 12px;
+}
+
+.rec-btn.ghost {
+  background: transparent;
+}
+
+.rec-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: hsl(353, 50%, 70%);
+}
+
+.recorder.is-recording .rec-btn#rec-toggle {
+  background: hsl(353, 40%, 38%);
+  border-color: hsl(353, 50%, 55%);
+}
+
+.recorder.is-recording .rec-dot {
+  animation: rec-pulse 1s infinite;
+}
+
+@keyframes rec-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.rec-count {
+  font-size: 12px;
+  color: hsl(225, 12%, 62%);
+}
+
+.rec-naming {
+  margin-bottom: 0.75rem;
+}
+
+.rec-naming input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #0f172a;
+  border: 1px solid rgba(226, 232, 240, 0.18);
+  border-radius: 7px;
+  padding: 0.5rem 0.6rem;
+  color: hsl(225, 20%, 88%);
+  font-family: Helvetica;
+  font-size: 13px;
+}
+
+.rec-naming input:focus {
+  outline: 1px solid hsl(34, 68%, 72%);
+}
+
+.rec-naming-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.rec-save,
+.rec-discard {
+  border-radius: 7px;
+  padding: 0.45rem 0.9rem;
+  font-family: Helvetica;
+  font-size: 12.5px;
+  border: 1px solid transparent;
+}
+
+.rec-save {
+  background: hsl(34, 68%, 72%);
+  color: #2a1f0d;
+}
+
+.rec-discard {
+  background: transparent;
+  color: hsl(225, 12%, 62%);
+  border-color: rgba(226, 232, 240, 0.16);
+}
+
+.rec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rec-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #101a2b;
+  border: 1px solid rgba(226, 232, 240, 0.08);
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+}
+
+.rec-item .rec-play-name {
+  flex: 1;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0;
+  color: hsl(225, 20%, 88%);
+  font-family: Helvetica;
+  font-size: 13px;
+}
+
+.rec-item .rec-play-name:hover {
+  color: hsl(34, 68%, 72%);
+}
+
+.rec-item .rec-steps {
+  font-size: 11px;
+  color: hsl(225, 12%, 55%);
+}
+
+.rec-item .rec-delete {
+  background: none;
+  border: none;
+  padding: 0 0.2rem;
+  color: hsl(225, 12%, 55%);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.rec-item .rec-delete:hover {
+  color: hsl(353, 50%, 70%);
+}
+
+.rec-empty {
+  color: hsl(225, 12%, 55%);
+  font-size: 12.5px;
+  text-align: center;
+  padding: 0.4rem 0;
+}
+
+.rec-replay {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px dashed rgba(226, 232, 240, 0.16);
+}
+
+.rec-replay-title {
+  color: hsl(34, 68%, 72%);
+  font-weight: bold;
+  margin-bottom: 0.2rem;
+}
+
+.rec-replay-step {
+  min-height: 2.6em;
+  font-size: 12.5px;
+}
+
+.rec-replay-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0.5rem 0 0.7rem;
+}
+
+.rec-replay-dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(226, 232, 240, 0.2);
+}
+
+.rec-replay-dots i.done {
+  background: hsl(34, 68%, 72%);
+}
+
+.rec-replay-dots i.current {
+  background: #fff;
+  transform: scale(1.35);
+}
+
+.rec-replay-controls {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.rec-hint {
+  margin: 1rem 0 0;
+  font-size: 11.5px;
+  color: hsl(225, 12%, 58%);
+}
+
+.rec-hint b {
+  color: hsl(225, 20%, 84%);
+}
+
+/* Key lit up by the replay */
+.calculator button.rec-flash {
+  box-shadow: 0 0 0 2px #fff, 0 0 14px 3px rgba(255, 255, 255, 0.6);
+}
+
+button span.sup {
+  font-size: xx-small !important;
+  vertical-align: super;
+}
+
+.sub {
+  font-size: xx-small;
+  vertical-align: bottom;
+}
+
+.xxs {
+  font-size: xx-small;
+}
